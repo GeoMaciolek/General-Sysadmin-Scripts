@@ -5,7 +5,6 @@
 ## Performs locking-style (mysqldump) backups, compresses files, retains backups for the
 ## number of days specified, and deletes all older backups, retaining the first of the
 ## month indefinitely.
-##
 ## To create the dumper user, execute the following SQL (probably via "mysql -u root -p")
 ##
 ## GRANT SELECT, LOCK TABLES, SHOW VIEW ON *.* TO 'dumper'@'localhost' IDENTIFIED BY 'SetYourPass';
@@ -43,9 +42,11 @@ mysqldumpbin="$(which mysqldump)"
 
 compressbin="$(which ${compressiontool})"
 
+# Timestamp logging, exported to subshells
 timestamp() {
       date +"%F %T - " | tr -d '\n' #remove newline!
 }
+export -f timestamp
 
 timestamp; echo "############### Beginning backup job ##################"
 
@@ -70,18 +71,16 @@ do
   echo "Done!"
 done
 
+# Remove backups older than "$keepdays" old. Always retain first of the month backups,
+# only including files w/names inc. ".backup.", and excluding files w/".txt" extensions,
+# as well as first of the month files ("*.backup.????-??-01")
+find $backuplocation/ -mtime +$keepdays -type f -name "*.backup.*" -not \( -name "*.txt" -o -name "*.backup.????-??-01*" \) -exec bash -c '
 
-#find /var/backups/mysql/ -ctime +$KEEPDAYS -not -name "*-??-01-??\:??.sql.*" -exec \
+     # The filename ispassed here as $0 - we log & delete
+   timestamp; echo "Removing old file: $0"
+   rm $0
 
-# Remove backups older than "$keepdays" old. Always retain first of the month backups
-# excluding files w/".txt" extensions, & only includes files w/ names containing  ".backup."
-find $backuplocation/ -mtime +$keepdays -type f -name "*.backup.*" -not -name "*.txt" -exec bash -c '
-
-     #{} is passed to this subshell, and shows up here as $0
-     dom=$(stat -c %y $0 | cut -c "9,10")  #find the date of the file
-     if [ "$dom" != "01" ]; then   #is day of the month 01?
-       rm $0   #remove the file
-     fi' {} \;  #actually passes in the filename
+' {} \; # End Exec, Pass {} as subshell param, to show up as $0
 
 timestamp; echo "############### Backup job finished! ##################"
 
