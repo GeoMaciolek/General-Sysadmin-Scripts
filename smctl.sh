@@ -34,7 +34,7 @@ usage() {
    $0 -x /dev/sda /dev/sdb
     Print all SMART and ATA info for /dev/sda and /dev/sdb
 
-   $0 -a /dev/sd[a-g]| grep -E "##|CRC"
+   $0 -a /dev/sd[a-g]| grep -E \"##|CRC\"
          Use shell globbing to get SMART info from all *existing* devices /dev/sda - /dev/sdg (if supported by your shell)
          and pipe through grep to find any CRC errors.  (## is included to show you which device is which)
 
