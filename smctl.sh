@@ -56,7 +56,7 @@ version() {
 ##### Main script  #####
 
 # Guess smartctl name & path, if it has not been specified above
-if [[ -z $smartctlbin ]]; then smartctlbin=$(which smartctl); echo "something something"; fi
+if [[ -z $smartctlbin ]]; then smartctlbin=$(which smartctl); fi
 
 # if "which" cannot locate smartctl, dump its output & inform the user to edit the script (at its location)
 if [[ $? != "0" ]]; then
