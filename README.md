@@ -25,6 +25,50 @@ Examples:
          Version info.
 </pre>
 
+### reekinpar.sh
+
+`reekinpar.sh` - A tool to parse "include" directives.  Configured out of the box to handle Bacula config files.  Many of us love to break down config files into small bites, but when something goes wrong, it's nice to be able to reassemble them and see the config how your software sees it!
+<pre>
+Recursive Inclusion Parser (reekinpar) usage
+reekinpar.sh [-h/--help] [-v/--verbose] [-V/--version] [-i includetext/--include=includetext] filename
+
+Examples:
+    reekinpar.sh bacula-dir.conf
+        Recursively stitch your 'bacula-dir.conf' file and its @/included/sub.configs together into one stream.
+
+    reekinpar.sh -v -iINCLUDE= something.ini
+        Recursively stitch your something.ini file, parsing lines beginning with INCLUDE= as filenames to include,
+        and display verbosely, with filenames and line numbers, as seen below</pre>
+
+#### something.ini 
+
+<pre>[Config Section 1]
+Some Parameter=45
+
+INCLUDE=otherconfig.ini
+
+[End Config]</pre>
+
+#### otherconfig.ini
+
+<pre>[Included Subconfig data]
+
+I=am hard to deal with
+Having=all in one file sometimes!</pre>
+
+#### Output
+
+<pre>  Input Filename      Line#   Output line
+----------------------------------------------------------
+somefile.ini          [001] [Config Section 1]
+somefile.ini          [002] Some Parameter=45
+somefile.ini          [003] 
+otherconfig.ini       [001] [Included Subconfig data]
+otherconfig.ini       [002] 
+otherconfig.ini       [003] I=am hard to deal with
+otherconfig.ini       [004] Having=all in one file sometimes!
+somefile.ini          [005] 
+somefile.ini          [006] [End Config]</pre>
 
 ### mysqlback.sh
 
