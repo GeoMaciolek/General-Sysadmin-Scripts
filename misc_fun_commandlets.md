@@ -15,9 +15,9 @@ Prepend (10-digit formatted) incrementing numbers
 ```bash
 gmaciolek@testsvr:~$ awk '{printf("%010d %s\n", NR, $0)}'
 gmaciolek@testsvr:~$ awk '{printf("%010d %s\n", NR, $0)}'
-````
+```
 Display multiple files w/names "starting with line 1"
-````bash
+```bash
 gmaciolek@testsvr:~$ tail -n +1 foo1 foo1e foo2 foo2e
 ==> foo1 <==
 f1col1line1 f1col2line1 f1col3line1
@@ -45,4 +45,13 @@ gmaciolek@testsvr:~$ join foo1e foo2e
 0000000001 f1col1line1 f1col2line1 f1col3line1 f2col1line1 f2col2line1 f2col3line1
 0000000002 f1col2line2 f1col2line2 f1col3line2 f2col2line2 f2col2line2 f2col3line2
 0000000003 f1col2line3 f1col2line3 f1col3line3 f2col2line3 f2col2line3 f2col3line3
+```
+
+Find the location of a script itself.
+```bash
+#!/bin/bash
+echo -n "I launch here, "; pwd; echo "but..
+cd $(dirname $(readlink -f $0))
+echo -n "The actual path to my own executable self is "; pwd
+
 ```
