@@ -100,15 +100,15 @@ do
 	    include="${1#-i}" ;;
          *)
 	   if [[ -f "${1}" ]]; then # This parameter looks like a file, or should be
-             if [[ filefound -eq 0 ]]; then
+             if [[ $filefound -eq 0 ]]; then
                filetoread="${1}"
               else
-		echo "### ERROR: Sorry, you can only specify a single file name."
+		echo -e "### ERROR: Sorry, you can only specify a single file name.\n"
                 usage; exit 1
              fi
              let filefound=1
             else
-              echo "### ERROR: Parameter not understood: ${1}"
+              echo -e "### ERROR: Parameter not understood: ${1}\n"
               usage; exit 1
            fi
 	;;
@@ -116,8 +116,9 @@ do
     shift #iterate to the next parameter via shifting all to the "left"
 done
 
-if [[ filefound -eq 0 ]]; then
+if [[ $filefound -eq 0 ]]; then
    echo "ERROR: You must specify a filename."
+   echo
    usage; exit 1
 fi
 
