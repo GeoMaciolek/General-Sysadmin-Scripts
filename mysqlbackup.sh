@@ -2,6 +2,8 @@
 ## MySQL Backup script
 ## G.Maciolek 2015-04-11
 ##
+## https://github.com/GeoffMaciolek/General-Sysadmin-Scripts
+##
 ## Performs locking-style (mysqldump) backups, compresses files, retains backups for the
 ## number of days specified, and deletes all older backups, retaining the first of the
 ## month indefinitely.
@@ -44,7 +46,7 @@ compressbin="$(which ${compressiontool})"
 
 # Timestamp logging, exported to subshells
 timestamp() {
-      date +"%F %T - " | tr -d '\n' #remove newline!
+    echo -n "$(date +"%F %T - ")"
 }
 export -f timestamp
 
@@ -76,11 +78,10 @@ done
 # as well as first of the month files ("*.backup.????-??-01")
 find $backuplocation/ -mtime +$keepdays -type f -name "*.backup.*" -not \( -name "*.txt" -o -name "*.backup.????-??-01*" \) -exec bash -c '
 
-     # The filename ispassed here as $0 - we log & delete
+     # The filename is passed here as $0 - we log & delete
    timestamp; echo "Removing old file: $0"
    rm $0
 
 ' {} \; # End Exec, Pass {} as subshell param, to show up as $0
 
 timestamp; echo "############### Backup job finished! ##################"
-
