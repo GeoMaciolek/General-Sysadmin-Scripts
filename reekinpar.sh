@@ -7,6 +7,9 @@
 ##
 ##  Geoff Maciolek, 2015-06-02
 ##  https://github.com/GeoffMaciolek/General-Sysadmin-Scripts
+##
+## v0.2 - 2015-06-09 - fixed issue w/indenting
+## v0.1 - 2015-06-02 - initial release
 
 # How do you delinate the beginning of an "include" statement?
 # (this can be passed as a parameter as well)
@@ -15,7 +18,7 @@ include='@'
 verbose=false
 
 myname="Recursive Inclusion Parser (reekinpar)"
-myver="0.1"
+myver="0.2"
 myurl="https://github.com/GeoffMaciolek/General-Sysadmin-Scripts"
 
 
@@ -24,7 +27,7 @@ myurl="https://github.com/GeoffMaciolek/General-Sysadmin-Scripts"
 readit () {
 local curfile="${1}"
 local linenum=0
-  while read line; do
+  while IFS='' read -r line; do
      let linenum+=1
      if [[ ${line} == "${include}"* ]]; then     #Does this line start with the include statement?
        newfile="${line#$include}"                # OK, strip the include tag off
@@ -43,7 +46,7 @@ local linenum=0
       if [[ "$verbose" == true ]]; then  #22 chars space for filename, 3 digits for line count
          printf "%-22s[%03u] %s\n" "${curfile}" "$linenum" "$line"
       else
-         echo "${line}" #plain formatting
+         printf "%s\n" "$line" #plain formatting
       fi
     fi
    done < "${curfile}"
