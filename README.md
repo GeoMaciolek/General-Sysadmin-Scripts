@@ -74,6 +74,19 @@ somefile.ini          [006] [End Config]</pre>
 
 `mysqlback.sh` Yet another MySQL backup script!
 
+This is a very straightforward, not very intelligent, but very easy to understand MySQL backup utility.
+
+To install (with more permissions than it needs!):
+
+```bash
+curl -o /usr/local/bin/mysqlbackup https://raw.githubusercontent.com/GeoffMaciolek/General-Sysadmin-Scripts/master/mysqlbackup.sh
+chmod +x /usr/local/bin/mysqlbackup
+ln -s /etc/cron.daily/mysqlbackup /usr/local/bin/mysqlbackup
+mysql -u root -p GRANT SELECT, LOCK TABLES, SHOW VIEW ON *.* TO 'dumper'@'localhost' IDENTIFIED BY 'SetYourPass';"
+# use your favorite editor, set the SetYourPass variable as desired
+vim /usr/local/bin/mysqlbackup
+```
+
 ### misc_fun_commandlets.md
 
 [misc_fun_commandlets.md](https://github.com/GeoffMaciolek/General-Sysadmin-Scripts/blob/master/misc_fun_commandlets.md) is a collection of little bash scripts & one-liners that might help with random tasks.
