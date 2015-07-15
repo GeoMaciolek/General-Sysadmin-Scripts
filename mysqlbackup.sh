@@ -34,6 +34,9 @@ compressiontool="xz" #compression tool: xz, gz, bzip2, etc - must work w/stdio (
 compressionext=".xz" #Compression extension: .xz, .gz .bz2 etc
 compressionparams="" # some compressors may require parameters
 
+#Databases to ignore - by default, this will not back up SQL users, only data
+declare -a dbignore=('information_schema' 'mysql')
+
 
 ##### End configuration options
 
@@ -48,6 +51,13 @@ compressbin="$(which ${compressiontool})"
 timestamp() {
     echo -n "$(date +"%F %T - ")"
 }
+
+containsElement () { # for array testing
+  local e
+  for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+  return 1
+}
+
 export -f timestamp
 
 timestamp; echo "############### Beginning backup job ##################"
@@ -57,20 +67,24 @@ umask 007 #Make sure the files are written 660
 dbs=$($mysqlbin -u$muser -h$mhost -p$mpass -Bse 'show databases')
 for db in $dbs
 do
-  now=$(date +"%Y-%m-%d-%H:%M") #params relevant to cleanup script below, SEE BELOW!
-  fileout=$db.backup.$now.sql # Don't remove ".backup." as it is part of the cleanup sanity check
-  timestamp; echo -n "Dumping $db... "
-  mkdir -p $backuplocation/$db/
-     #dump the selected database into stdout
-  $mysqldumpbin -u ${muser} -h${mhost} -p${mpass} ${db} > $tempdir/$fileout
-  echo "done!"
-  timestamp; echo -n "Compressing $tempdir/${fileout}... "
-  $compressbin $compressionparams $tempdir/$fileout
-  echo "Done!"
-  timestamp; echo -n "Moving archive to $backuplocation/$db/... "
-  mv "$tempdir/$fileout$compressionext" "$backuplocation/$db/"
-     # ^ feed through compression tool selected above
-  echo "Done!"
+  if [ $(containsElement "$db" "${dbignore[@]}") ]; then
+    echo "Skipping $db"
+  else
+    now=$(date +"%Y-%m-%d-%H:%M") #params relevant to cleanup script below, SEE BELOW!
+    fileout=$db.backup.$now.sql # Don't remove ".backup." as it is part of the cleanup sanity check
+    timestamp; echo -n "Dumping $db... "
+    mkdir -p $backuplocation/$db/
+       #dump the selected database into stdout
+    $mysqldumpbin -u ${muser} -h${mhost} -p${mpass} ${db} > $tempdir/$fileout
+    echo "done!"
+    timestamp; echo -n "Compressing $tempdir/${fileout}... "
+    $compressbin $compressionparams $tempdir/$fileout
+    echo "Done!"
+    timestamp; echo -n "Moving archive to $backuplocation/$db/... "
+    mv "$tempdir/$fileout$compressionext" "$backuplocation/$db/"
+       # ^ feed through compression tool selected above
+    echo "Done!"
+  fi
 done
 
 # Remove backups older than "$keepdays" old. Always retain first of the month backups,
