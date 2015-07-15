@@ -82,7 +82,7 @@ To install (with more permissions than it needs!):
 curl -o /usr/local/bin/mysqlbackup https://raw.githubusercontent.com/GeoffMaciolek/General-Sysadmin-Scripts/master/mysqlbackup.sh
 chmod +x /usr/local/bin/mysqlbackup
 ln -s /etc/cron.daily/mysqlbackup /usr/local/bin/mysqlbackup
-mysql -u root -p GRANT SELECT, LOCK TABLES, SHOW VIEW ON *.* TO 'dumper'@'localhost' IDENTIFIED BY 'SetYourPass';"
+mysql -u root -p <<< 'GRANT SELECT, LOCK TABLES, SHOW VIEW ON *.* TO "dumper"@"localhost" IDENTIFIED BY "SetYourPass";"'
 # use your favorite editor, set the SetYourPass variable as desired
 vim /usr/local/bin/mysqlbackup
 ```
