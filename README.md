@@ -1,5 +1,11 @@
 # General-Sysadmin-Scripts
 
+## Important Warning & Disclaimer
+
+**Warning!** I haven't updated these scripts in many years, and they haven't been properly checked for safety or sanity. I don't use many of these anymore, and I would advise you - even moreso than I would usually - to exercise caution, and to read them before running them.
+
+## Overview
+
 These are some scripts I use in my regular day-to-day operations as a sysadmin, or ones that run as cron jobs.  Some of these would be be simpler and more elegant if they were implemented as actual programs (using support libraries, actual logging features, etc).
 
 But they work!
